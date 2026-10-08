@@ -1,5 +1,5 @@
 # PRAVAH - Predictive Resilience & Adaptive Vulnerability-Aware Hazard Response
-# Production Backend Requirements
+# Root Deployment Requirements (mirrors backend/requirements.txt)
 # Cross-platform compatible (Linux, macOS, Windows)
 # Compatible with Python 3.9, 3.10, 3.11, 3.12, 3.13
 
