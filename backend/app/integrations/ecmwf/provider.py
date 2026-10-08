@@ -29,8 +29,11 @@ class ECMWFProvider(BaseDataProvider):
             "forecast_days": 3,
             "timezone": "Asia/Kolkata"
         }
+        headers = {
+            "User-Agent": "PRAVAH-ResilienceEngine/2.0 (Chennai Urban Flood Command; contact: open-data@chennaipravah.org)"
+        }
         url = f"{self.base_url}/v1/forecast"
-        async with httpx.AsyncClient(timeout=6.0) as client:
+        async with httpx.AsyncClient(timeout=8.0, headers=headers) as client:
             resp = await client.get(url, params=params)
             resp.raise_for_status()
             data = resp.json()
@@ -60,11 +63,11 @@ class ECMWFProvider(BaseDataProvider):
             "model": "ecmwf_ifs025",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "location": {"lat": 13.0827, "lon": 80.2707, "city": "Chennai"},
-            "forecast_rainfall_24h_mm": 158.0,
-            "max_wind_speed_kmh": 32.0,
+            "forecast_rainfall_24h_mm": 0.0,
+            "max_wind_speed_kmh": 16.0,
             "ensemble_members_count": 51,
             "confidence_band": "NWP_DETERMINISTIC_GLOBAL",
-            "hourly_trend": [15.0, 20.0, 28.0, 36.0, 30.0, 18.0, 11.0]
+            "hourly_trend": [0.0] * 12
         }
 
 ecmwf_provider = ECMWFProvider()

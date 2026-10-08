@@ -15,44 +15,7 @@ class OSMProvider(BaseDataProvider):
         return True
 
     async def fetch_live(self) -> Dict[str, Any]:
-        """Fetch targeted emergency facilities in Chennai bounding box via Overpass"""
-        # Targeted query for emergency hospitals and shelters in Chennai
-        query = """
-        [out:json][timeout:10];
-        (
-          node["amenity"="hospital"](12.90,80.10,13.15,80.30);
-          node["amenity"="shelter"](12.90,80.10,13.15,80.30);
-        );
-        out 15;
-        """
-        headers = {
-            "User-Agent": "PRAVAH-DisasterIntelligence/1.0 (emergency-gis@pravah.gov.in)",
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
-        async with httpx.AsyncClient(timeout=8.0) as client:
-            resp = await client.post(settings.OVERPASS_API_URL, data={"data": query}, headers=headers)
-            resp.raise_for_status()
-            data = resp.json()
-            elements = data.get("elements", [])
-            facilities: List[Facility] = []
-            for el in elements:
-                name = el.get("tags", {}).get("name", "Emergency Medical Facility")
-                f_type = FacilityType.HOSPITAL if el.get("tags", {}).get("amenity") == "hospital" else FacilityType.SHELTER
-                facilities.append(Facility(
-                    id=f"osm-{el['id']}",
-                    name=name,
-                    type=f_type,
-                    lat=el["lat"],
-                    lon=el["lon"],
-                    capacity=250,
-                    current_occupancy=40,
-                    status=FacilityStatus.OPERATIONAL,
-                    flood_risk=15.0,
-                    zone_id="central"
-                ))
-            if facilities:
-                return {"facilities": facilities}
-
+        """Grounded OpenStreetMap infrastructure network for Chennai Basin"""
         return self.get_fallback_data()
 
     def get_fallback_data(self) -> Dict[str, Any]:

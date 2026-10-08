@@ -140,8 +140,8 @@ export const App: React.FC = () => {
         }),
         fetchAlerts(),
         fetchRiverLevels(),
-        fetchFloodHazards(),
-        fetchFacilities(),
+        fetchFloodHazards(isDemoMode),
+        fetchFacilities(isDemoMode),
         fetchProvenance(),
         fetchSystemHealth(),
         fetchModelValidation(),
@@ -152,7 +152,7 @@ export const App: React.FC = () => {
         fetchIMDAWS(),
         fetchIMDBasinQPF(),
         fetchIMDCyclone(),
-        fetchRiskAwareRoute(),
+        fetchRiskAwareRoute(isDemoMode),
         fetchOpenMeteoDeepTelemetry()
       ]);
 
@@ -224,7 +224,7 @@ export const App: React.FC = () => {
 
       // Re-fetch routing comparison to reflect perturbed road accessibility
       try {
-        const updatedRoute = await fetchRiskAwareRoute();
+        const updatedRoute = await fetchRiskAwareRoute(isDemoMode);
         setRoutingComparison(updatedRoute);
       } catch (rErr) {
         console.warn('Route refresh notice:', rErr);

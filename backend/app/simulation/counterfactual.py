@@ -38,14 +38,14 @@ class CounterfactualSimulator:
         om_rain_forecast = om_data.get("rainfall_forecast_24h", {})
         live_rain_24h = float(om_rain_forecast.get("total_precipitation_mm", 0.0))
         live_intensity = float(om_rain_forecast.get("peak_hourly_intensity_mm_hr", 0.0))
-        live_discharge_ratio = float(glofas_data.get("discharge_ratio", 1.25))
+        live_discharge_ratio = float(glofas_data.get("discharge_ratio", 0.03))
 
         # Real-time atmospheric anomaly factor from Open-Meteo (Humidity & Pressure Depression)
         curr_cond = om_data.get("current_conditions", {})
         baro_diag = om_data.get("barometric_diagnostics", {})
 
-        humidity_anomaly = (float(curr_cond.get("relative_humidity_pct", 85.0)) - 75.0) / 100.0
-        min_mslp = float(baro_diag.get("min_forecast_mslp_hpa", 1008.0))
+        humidity_anomaly = (float(curr_cond.get("relative_humidity_pct", 70.0)) - 75.0) / 100.0
+        min_mslp = float(baro_diag.get("min_forecast_mslp_hpa", 1012.0))
         pressure_anomaly = (1010.0 - min_mslp) / 100.0
         atmos_modifier = max(0.85, min(1.30, 1.0 + humidity_anomaly + pressure_anomaly))
 
@@ -56,6 +56,7 @@ class CounterfactualSimulator:
             sar_signal = True
             sim_rain_24h = round(base_rain_24h * req.rainfall_multiplier, 1)
             sim_intensity = round(base_intensity * (req.rainfall_multiplier ** 0.8), 1)
+            discharge_ratio = round(1.35 * req.river_discharge_multiplier, 2)
         else:
             # Real-Life Live Mode: Directly use live Open-Meteo precipitation metrics
             base_rain_24h = max(0.0, live_rain_24h)
@@ -71,12 +72,12 @@ class CounterfactualSimulator:
                 sim_rain_24h = round(base_rain_24h * req.rainfall_multiplier, 1)
                 sim_intensity = round(base_intensity * (req.rainfall_multiplier ** 0.8), 1)
 
-        # Baseline discharge ratio derived from GloFAS and request multiplier
-        if req.river_discharge_multiplier > 1.0 and live_discharge_ratio < 0.2:
-            added_discharge = (req.river_discharge_multiplier - 1.0) * 1.5
-            discharge_ratio = round(live_discharge_ratio + added_discharge, 2)
-        else:
-            discharge_ratio = round(live_discharge_ratio * req.river_discharge_multiplier, 2)
+            # Baseline discharge ratio derived from GloFAS and request multiplier
+            if req.river_discharge_multiplier > 1.0 and live_discharge_ratio < 0.2:
+                added_discharge = (req.river_discharge_multiplier - 1.0) * 1.5
+                discharge_ratio = round(live_discharge_ratio + added_discharge, 2)
+            else:
+                discharge_ratio = round(live_discharge_ratio * req.river_discharge_multiplier, 2)
 
         # Step 2: Recalculate all Chennai zones
         zones = get_chennai_zones_base()

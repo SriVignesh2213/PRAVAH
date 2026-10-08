@@ -27,7 +27,10 @@ class GlofasProvider(BaseDataProvider):
             "daily": "river_discharge,river_discharge_median,river_discharge_max,river_discharge_min",
             "forecast_days": 7
         }
-        async with httpx.AsyncClient(timeout=6.0) as client:
+        headers = {
+            "User-Agent": "PRAVAH-ResilienceEngine/2.0 (Chennai Urban Flood Command; contact: open-data@chennaipravah.org)"
+        }
+        async with httpx.AsyncClient(timeout=8.0, headers=headers) as client:
             resp = await client.get(self.base_url, params=params)
             resp.raise_for_status()
             data = resp.json()
@@ -76,14 +79,14 @@ class GlofasProvider(BaseDataProvider):
             "source": "GloFAS-cached",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "basin": "Adyar & Cooum River Basins (Chennai)",
-            "current_river_discharge_m3s": 52.4,
-            "peak_forecast_discharge_m3s": 174.0,
-            "hydrological_risk_signal": "SEVERE_HYDROLOGIC_SURGE",
-            "flood_susceptibility_signal": "CRITICAL",
-            "ensemble_median_m3s": [48.0, 92.0, 165.0, 140.0, 80.0],
-            "ensemble_upper_bound_m3s": [58.0, 118.0, 212.0, 185.0, 105.0],
+            "current_river_discharge_m3s": 3.69,
+            "peak_forecast_discharge_m3s": 3.95,
+            "hydrological_risk_signal": "NORMAL_BASEFLOW",
+            "flood_susceptibility_signal": "LOW",
+            "ensemble_median_m3s": [3.6, 3.8, 3.9, 3.7, 3.6],
+            "ensemble_upper_bound_m3s": [4.5, 4.8, 5.0, 4.8, 4.5],
             "danger_threshold_m3s": 120.0,
-            "discharge_ratio": 1.45,
+            "discharge_ratio": 0.03,
             "terminology_note": "Hydrological risk signal represents river discharge forecast probability, not direct urban street flood depth."
         }
 

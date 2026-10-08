@@ -67,20 +67,20 @@ export async function fetchRiverLevels(): Promise<RiverObservation[]> {
   return res.json();
 }
 
-export async function fetchFloodHazards(): Promise<{ zones: ChennaiZone[]; satellite_evidence: SatelliteEvidence }> {
-  const res = await fetch(`${API_BASE}/hazards/flood`);
+export async function fetchFloodHazards(useDemoScenario: boolean = false): Promise<{ zones: ChennaiZone[]; satellite_evidence: SatelliteEvidence }> {
+  const res = await fetch(`${API_BASE}/hazards/flood?use_demo_scenario=${useDemoScenario}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch flood hazards`);
   return res.json();
 }
 
-export async function fetchFacilities(): Promise<Facility[]> {
-  const res = await fetch(`${API_BASE}/facilities`);
+export async function fetchFacilities(useDemoScenario: boolean = false): Promise<Facility[]> {
+  const res = await fetch(`${API_BASE}/facilities?use_demo_scenario=${useDemoScenario}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch facilities`);
   return res.json();
 }
 
-export async function fetchRoutes(): Promise<{ road_network: RoadSegment[]; routing_comparison: any }> {
-  const res = await fetch(`${API_BASE}/routes`);
+export async function fetchRoutes(useDemoScenario: boolean = false): Promise<{ road_network: RoadSegment[]; routing_comparison: any }> {
+  const res = await fetch(`${API_BASE}/routes?use_demo_scenario=${useDemoScenario}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch routes`);
   return res.json();
 }
@@ -158,8 +158,8 @@ export async function fetchDataFusion(): Promise<any> {
   return res.json();
 }
 
-export async function fetchRiskAwareRoute(): Promise<any> {
-  const res = await fetch(`${API_BASE}/routes/risk-aware`, {
+export async function fetchRiskAwareRoute(useDemoScenario: boolean = false): Promise<any> {
+  const res = await fetch(`${API_BASE}/routes/risk-aware?use_demo_scenario=${useDemoScenario}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' }
   });
