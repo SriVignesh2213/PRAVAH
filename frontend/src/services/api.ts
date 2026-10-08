@@ -12,7 +12,12 @@ import {
   Facility
 } from '../types';
 
-const API_BASE = '/api/v1';
+// Support Vercel production deployment with Render backend
+// Reads VITE_API_BASE_URL (e.g. "https://pravah-lxz6.onrender.com")
+// Safely strips trailing slash if provided to prevent double slashes
+const RAW_BACKEND_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) || '';
+const BACKEND_URL = RAW_BACKEND_URL.replace(/\/+$/, '');
+const API_BASE = BACKEND_URL ? `${BACKEND_URL}/api/v1` : '/api/v1';
 
 export async function fetchDashboardSummary(useDemoScenario: boolean = false): Promise<DashboardSummary> {
   const res = await fetch(`${API_BASE}/dashboard/summary?use_demo_scenario=${useDemoScenario}`);

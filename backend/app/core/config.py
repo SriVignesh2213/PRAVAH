@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     HOST: str = "127.0.0.1"
     PORT: int = 8000
+    CORS_ORIGINS: Optional[str] = "https://pravah-sooty.vercel.app,http://localhost:5173,http://localhost:3000"
 
     DATABASE_URL: str = "sqlite:///./pravah.db"
 
