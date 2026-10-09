@@ -20,7 +20,7 @@ export const ActionOptimizer: React.FC<ActionOptimizerProps> = ({ recommendation
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
           <TrendingUp size={14} color="#38bdf8" />
           <span style={{ fontSize: '11px', fontWeight: 700, color: '#f8fafc', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Current Standard Plan vs. PRAVAH Optimized Plan
+            Current Standard Plan vs. AEGIS EARTH Optimized Plan
           </span>
         </div>
 
@@ -46,8 +46,8 @@ export const ActionOptimizer: React.FC<ActionOptimizerProps> = ({ recommendation
                 {c.baseline_value}
               </div>
               <div style={{ color: '#38bdf8', fontWeight: 700 }}>
-                <span style={{ fontSize: '8px', color: '#64748b', display: 'block' }}>PRAVAH</span>
-                {c.pravah_value}
+                <span style={{ fontSize: '8px', color: '#64748b', display: 'block' }}>AEGIS EARTH</span>
+                {c.aegis_value || c.pravah_value}
               </div>
               <div style={{ textAlign: 'right' }}>
                 <span className="badge-tag badge-low">{c.improvement}</span>

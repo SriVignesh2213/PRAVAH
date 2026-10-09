@@ -5,9 +5,9 @@ from app.core.config import settings
 from app.core.logging import logger
 
 app = FastAPI(
-    title="PRAVAH - Predictive Disaster Decision Intelligence System",
-    description="Predictive Resilience & Adaptive Vulnerability-Aware Hazard Response API for Urban Flooding & Cascading Crisis Management",
-    version="1.0.0"
+    title="AEGIS EARTH - Hyperlocal Flood Early-Warning and Evacuation Copilot",
+    description="Hyperlocal Flood Early-Warning & Evacuation Copilot for City Disaster Management Cells & Urban Residents (Chennai Basin)",
+    version="2.0.0"
 )
 
 # Enable CORS for React frontend (Vercel production, preview regex, local dev)
@@ -40,7 +40,8 @@ app.include_router(v1_router, prefix="/api/v1")
 @app.get("/health")
 async def root_health():
     return {
-        "system": "PRAVAH",
+        "system": "AEGIS EARTH",
+        "title": "Hyperlocal Flood Early-Warning and Evacuation Copilot",
         "status": "OPERATIONAL",
         "environment": settings.ENVIRONMENT,
         "demo_mode": settings.DEMO_MODE,
@@ -49,7 +50,7 @@ async def root_health():
 
 @app.on_event("startup")
 async def on_startup():
-    logger.info("PRAVAH Decision Intelligence Backend initialized successfully.")
+    logger.info("AEGIS EARTH Hyperlocal Early-Warning & Evacuation Copilot backend initialized successfully.")
 
 if __name__ == "__main__":
     import uvicorn

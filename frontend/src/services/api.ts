@@ -9,7 +9,11 @@ import {
   ModelValidation,
   ChennaiZone,
   RoadSegment,
-  Facility
+  Facility,
+  MultilingualAdvisory,
+  CopilotQueryRequest,
+  CopilotQueryResponse,
+  AdvisoryApprovalRequest
 } from '../types';
 
 // Support Vercel production deployment with Render backend
@@ -172,6 +176,34 @@ export async function fetchOpenMeteoDeepTelemetry(): Promise<any> {
   if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch Open-Meteo telemetry`);
   return res.json();
 }
+
+// HW01 Copilot & Multilingual Advisory APIs
+export async function fetchMultilingualAdvisories(useDemoScenario: boolean = false): Promise<MultilingualAdvisory[]> {
+  const res = await fetch(`${API_BASE}/copilot/advisories?use_demo_scenario=${useDemoScenario}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch multilingual advisories`);
+  return res.json();
+}
+
+export async function approveAdvisory(req: AdvisoryApprovalRequest): Promise<{ status: string; advisory: MultilingualAdvisory }> {
+  const res = await fetch(`${API_BASE}/copilot/advisory/approve`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req)
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to approve advisory`);
+  return res.json();
+}
+
+export async function queryCopilot(params: CopilotQueryRequest): Promise<CopilotQueryResponse> {
+  const res = await fetch(`${API_BASE}/copilot/query`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params)
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to query Copilot AI`);
+  return res.json();
+}
+
 
 
 

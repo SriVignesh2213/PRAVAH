@@ -5,7 +5,8 @@ from typing import List, Dict, Any, Optional
 from app.models.domain import (
     ChennaiZone, Facility, RoadSegment, AlertItem, RiverObservation,
     SatelliteEvidence, RecommendedAction, SystemProviderHealth,
-    CounterfactualRequest, SimulationResult, RiskClass
+    CounterfactualRequest, SimulationResult, RiskClass,
+    MultilingualAdvisory, CopilotQueryRequest, CopilotQueryResponse, AdvisoryApprovalRequest
 )
 from app.schemas.api import DashboardSummaryResponse, ProvenanceResponse, ProvenanceItem
 from app.integrations.open_meteo.provider import open_meteo_provider
@@ -25,6 +26,7 @@ from app.integrations.osm.provider import osm_provider
 from app.integrations.routing.provider import routing_provider
 from app.integrations.elevation.provider import elevation_provider
 from app.simulation.counterfactual import counterfactual_simulator
+from app.copilot.engine import copilot_engine
 from app.optimization.engine import resource_optimizer
 from app.core.config import settings
 
@@ -267,6 +269,55 @@ async def get_cascading_failures(use_demo_scenario: Optional[bool] = None):
     sim = await counterfactual_simulator.run_simulation(CounterfactualRequest(use_demo_scenario=demo))
     return sim.cascade
 
+# =========================================================================
+# HW01 MULTILINGUAL ADVISORIES & AGENTIC EVACUATION COPILOT
+# =========================================================================
+
+@router.get("/copilot/advisories", response_model=List[MultilingualAdvisory])
+async def get_multilingual_advisories(use_demo_scenario: Optional[bool] = None):
+    """
+    HW01 Core: Generates ward-level localized multilingual flood advisories (English & Tamil)
+    with Estimated Time-to-Impact (TTI), predicted inundation depth, safe evacuation corridors,
+    and Human-in-the-Loop operator review status.
+    """
+    demo = use_demo_scenario if use_demo_scenario is not None else settings.DEMO_MODE
+    sim = await counterfactual_simulator.run_simulation(CounterfactualRequest(use_demo_scenario=demo))
+    osm_data, _, _ = await osm_provider.get_data()
+    facilities = osm_data.get("facilities", [])
+    return copilot_engine.generate_multilingual_advisories(
+        zones=sim.zones,
+        roads=sim.roads,
+        facilities=facilities,
+        is_demo_mode=demo
+    )
+
+@router.post("/copilot/advisory/approve")
+async def approve_multilingual_advisory(req: AdvisoryApprovalRequest):
+    """
+    HW01 Constraint: Human-in-the-Loop review signoff before public broadcasting.
+    Duty Officer reviews, edits if needed, and authorizes advisory dispatch.
+    """
+    adv = copilot_engine.approve_advisory(req)
+    return {"status": "SUCCESS", "advisory": adv}
+
+@router.post("/copilot/query", response_model=CopilotQueryResponse)
+async def query_copilot_assistant(req: CopilotQueryRequest):
+    """
+    HW01 Core: Agentic Copilot answering resident and disaster cell officer queries.
+    Interprets intent, invokes telemetry & routing tools, and provides actionable,
+    bilingual evacuation guidance.
+    """
+    sim = await counterfactual_simulator.run_simulation(CounterfactualRequest(use_demo_scenario=req.use_demo_scenario))
+    osm_data, _, _ = await osm_provider.get_data()
+    facilities = osm_data.get("facilities", [])
+    return await copilot_engine.answer_copilot_query(
+        req=req,
+        zones=sim.zones,
+        roads=sim.roads,
+        facilities=facilities,
+        is_demo=req.use_demo_scenario
+    )
+
 @router.get("/timeline/replay")
 async def get_historical_replay(step: str = Query("T0", description="T-6h, T-4h, T-2h, T-1h, T0, T+1h, T+2h")):
     """Historical timeline progression for Chennai Extreme Rainfall Replay"""
@@ -293,7 +344,7 @@ async def get_historical_replay(step: str = Query("T0", description="T-6h, T-4h,
 
 @router.get("/validation")
 async def get_model_validation():
-    """Model & System Validation metrics comparing Baseline vs PRAVAH"""
+    """Model & System Validation metrics comparing Baseline vs AEGIS EARTH"""
     return {
         "evaluation_type": "Simulation-based empirical validation (Chennai Catchment)",
         "metrics": {
@@ -305,6 +356,7 @@ async def get_model_validation():
         },
         "operational_impact": {
             "baseline_avg_response_time_min": 34.0,
+            "aegis_earth_avg_response_time_min": 22.5,
             "pravah_avg_response_time_min": 22.5,
             "response_time_improvement_pct": 33.8,
             "population_protection_gain_pct": 36.0,

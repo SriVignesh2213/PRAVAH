@@ -15,6 +15,8 @@ import { ValidationModal } from './components/ValidationModal';
 import { IMDWeatherModal } from './components/IMDWeatherModal';
 import { RiskAwareRoutingModal } from './components/RiskAwareRoutingModal';
 import { OpenMeteoModal } from './components/OpenMeteoModal';
+import { CopilotModal } from './components/CopilotModal';
+import { AdvisoryStudioModal } from './components/AdvisoryStudioModal';
 import {
   fetchDashboardSummary,
   fetchSimulation,
@@ -71,6 +73,8 @@ export const App: React.FC = () => {
   const [routingComparison, setRoutingComparison] = useState<any>(null);
   const [isOpenMeteoOpen, setIsOpenMeteoOpen] = useState<boolean>(false);
   const [openMeteoTelemetry, setOpenMeteoTelemetry] = useState<any>(null);
+  const [isCopilotOpen, setIsCopilotOpen] = useState<boolean>(false);
+  const [isAdvisoriesOpen, setIsAdvisoriesOpen] = useState<boolean>(false);
 
   // Core Data State
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -304,6 +308,8 @@ export const App: React.FC = () => {
         onOpenIMD={() => setIsIMDOpen(true)}
         onOpenRouting={() => setIsRoutingOpen(true)}
         onOpenOpenMeteo={() => setIsOpenMeteoOpen(true)}
+        onOpenCopilot={() => setIsCopilotOpen(true)}
+        onOpenAdvisories={() => setIsAdvisoriesOpen(true)}
         onRefresh={loadInitialData}
         loading={loading}
       />
@@ -517,6 +523,19 @@ export const App: React.FC = () => {
         isOpen={isOpenMeteoOpen}
         onClose={() => setIsOpenMeteoOpen(false)}
         telemetry={openMeteoTelemetry}
+      />
+
+      {/* HW01 Agentic AI Copilot & Multilingual Advisory Broadcast Studio */}
+      <CopilotModal
+        isOpen={isCopilotOpen}
+        onClose={() => setIsCopilotOpen(false)}
+        isDemoMode={isDemoMode}
+      />
+
+      <AdvisoryStudioModal
+        isOpen={isAdvisoriesOpen}
+        onClose={() => setIsAdvisoriesOpen(false)}
+        isDemoMode={isDemoMode}
       />
     </div>
   );

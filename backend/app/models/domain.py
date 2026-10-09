@@ -61,6 +61,7 @@ class ChennaiZone(BaseModel):
     id: str
     name: str
     ward_number: int
+    ward_label: str = ""
     geometry: Dict[str, Any] # GeoJSON Polygon
     centroid: List[float] # [lon, lat]
     elevation_m: float
@@ -75,6 +76,15 @@ class ChennaiZone(BaseModel):
     risk_class: RiskClass = RiskClass.LOW
     confidence: float = 80.0 # 0 - 100
     confidence_interval: List[float] = [0.0, 0.0]
+    
+    # HW01 Time-to-Impact & Hydrologic Depth
+    time_to_impact_hours: float = 0.0
+    time_to_impact_range_hours: List[float] = [0.0, 0.0]
+    inundation_depth_cm: float = 0.0
+    water_rise_rate_cm_hr: float = 0.0
+    critical_streets: List[str] = []
+    nearest_shelter_name: str = ""
+    nearest_shelter_capacity: int = 0
     
     vulnerability_score: float = 0.0 # 0 - 100
     impact_score: float = 0.0 # 0 - 100
@@ -180,7 +190,8 @@ class CounterfactualRequest(BaseModel):
 class CounterfactualComparison(BaseModel):
     metric: str
     baseline_value: str
-    pravah_value: str
+    pravah_value: str = ""
+    aegis_value: str = ""
     improvement: str
     unit: str
 
@@ -199,3 +210,71 @@ class SimulationResult(BaseModel):
     comparisons: List[CounterfactualComparison]
     zones: List[ChennaiZone]
     roads: List[RoadSegment]
+
+# =========================================================================
+# HW01 MULTILINGUAL ADVISORIES & AGENTIC COPILOT SCHEMAS
+# =========================================================================
+
+class AdvisorySeverity(str, Enum):
+    CRITICAL = "CRITICAL"
+    WARNING = "WARNING"
+    WATCH = "WATCH"
+    ADVISORY = "ADVISORY"
+    NORMAL = "NORMAL"
+
+class AdvisoryStatus(str, Enum):
+    PENDING_OPERATOR_REVIEW = "PENDING_OPERATOR_REVIEW"
+    OPERATOR_APPROVED = "OPERATOR_APPROVED"
+    BROADCAST_AUTHORIZED = "BROADCAST_AUTHORIZED"
+
+class MultilingualAdvisory(BaseModel):
+    id: str
+    ward_id: str
+    ward_label: str
+    ward_name: str
+    severity: AdvisorySeverity
+    time_to_impact: str
+    time_to_impact_hours: float
+    inundation_expected_depth_cm: float
+    water_rise_rate_cm_hr: float
+    status: AdvisoryStatus = AdvisoryStatus.PENDING_OPERATOR_REVIEW
+    approved_by: Optional[str] = None
+    approved_at: Optional[str] = None
+    operator_notes: Optional[str] = None
+    english_title: str
+    english_message: str
+    english_action: str
+    english_safe_route: str
+    tamil_title: str
+    tamil_message: str
+    tamil_action: str
+    tamil_safe_route: str
+    sms_condensed: str
+    target_shelter: str
+    critical_streets_avoid: List[str]
+    is_simulated: bool = False
+    timestamp: str
+
+class CopilotQueryRequest(BaseModel):
+    query: str
+    ward_id: Optional[str] = None
+    language: str = "en"
+    use_demo_scenario: bool = False
+
+class CopilotQueryResponse(BaseModel):
+    query: str
+    answer: str
+    answer_tamil: Optional[str] = None
+    intent: str
+    tools_invoked: List[str]
+    evidence_sources: List[str]
+    suggested_actions: List[str]
+    data_mode: str
+    timestamp: str
+
+class AdvisoryApprovalRequest(BaseModel):
+    advisory_id: str
+    operator_name: str = "Duty Officer - GCC Disaster Cell"
+    operator_notes: Optional[str] = None
+    edited_english_message: Optional[str] = None
+    edited_tamil_message: Optional[str] = None

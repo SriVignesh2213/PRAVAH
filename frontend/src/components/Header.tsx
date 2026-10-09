@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, ShieldCheck, Database, Award, RefreshCw, AlertTriangle, CloudRain, Navigation } from 'lucide-react';
+import { Activity, ShieldCheck, Database, Award, RefreshCw, AlertTriangle, CloudRain, Navigation, Bot, Radio } from 'lucide-react';
 import { DashboardSummary } from '../types';
 
 interface HeaderProps {
@@ -12,6 +12,8 @@ interface HeaderProps {
   onOpenIMD: () => void;
   onOpenRouting?: () => void;
   onOpenOpenMeteo?: () => void;
+  onOpenCopilot?: () => void;
+  onOpenAdvisories?: () => void;
   onRefresh: () => void;
   loading: boolean;
 }
@@ -26,6 +28,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenIMD,
   onOpenRouting,
   onOpenOpenMeteo,
+  onOpenCopilot,
+  onOpenAdvisories,
   onRefresh,
   loading
 }) => {
@@ -44,25 +48,26 @@ export const Header: React.FC<HeaderProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{
-              background: '#1e293b',
-              border: '1px solid #334155',
-              borderRadius: '3px',
-              padding: '3px 8px',
+              background: 'linear-gradient(135deg, #0284c7, #2563eb)',
+              border: '1px solid #38bdf8',
+              borderRadius: '4px',
+              padding: '4px 10px',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              boxShadow: '0 0 12px rgba(14, 165, 233, 0.4)'
             }}>
-              <Activity size={15} color="#06b6d4" />
-              <span style={{ fontWeight: 800, fontSize: '15px', letterSpacing: '0.08em', color: '#f8fafc' }}>
-                PRAVAH
+              <Activity size={16} color="#ffffff" />
+              <span style={{ fontWeight: 900, fontSize: '15px', letterSpacing: '0.08em', color: '#ffffff' }}>
+                AEGIS EARTH
               </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#e2e8f0', letterSpacing: '0.03em' }}>
-                CHENNAI BASIN DECISION INTELLIGENCE
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#e2e8f0', letterSpacing: '0.03em' }}>
+                HYPERLOCAL FLOOD EARLY-WARNING &amp; EVACUATION COPILOT (HW01)
               </span>
               <span style={{ fontSize: '10px', color: '#64748b' }}>
-                Predictive Resilience & Adaptive Vulnerability-Aware Hazard Response
+                Chennai Basin • Uncertainty-Aware Decision Intelligence &amp; Multilingual Action
               </span>
             </div>
           </div>
@@ -111,6 +116,50 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Triggers */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={onOpenCopilot}
+            title="HW01 Agentic AI Copilot: Natural language flood guidance and route navigation"
+            style={{
+              background: 'linear-gradient(135deg, #0369a1, #1d4ed8)',
+              border: '1px solid #38bdf8',
+              padding: '4px 11px',
+              borderRadius: '4px',
+              color: '#ffffff',
+              fontSize: '11px',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+              boxShadow: '0 0 10px rgba(14, 165, 233, 0.35)'
+            }}
+          >
+            <Bot size={14} color="#ffffff" />
+            Copilot AI
+          </button>
+
+          <button
+            onClick={onOpenAdvisories}
+            title="HW01 Multilingual Advisory Studio: Ward-by-ward English, Tamil, and SMS broadcasts"
+            style={{
+              background: '#064e3b',
+              border: '1px solid #10b981',
+              padding: '4px 11px',
+              borderRadius: '4px',
+              color: '#a7f3d0',
+              fontSize: '11px',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+              boxShadow: '0 0 10px rgba(16, 185, 129, 0.25)'
+            }}
+          >
+            <Radio size={14} color="#34d399" />
+            Advisories (தமிழ்/EN)
+          </button>
+
           <button
             onClick={onOpenRouting}
             title="Inspect Risk-Aware Routing vs Naïve Shortest Path"

@@ -114,6 +114,29 @@ class CounterfactualSimulator:
             zone.supporting_evidence = evidence
             zone.contradictions = contradictions
 
+            # Localized Time-to-Impact & Inundation Depth (HW01 Hyperlocal Core)
+            if risk_score >= 80.0:
+                tti = round(max(0.8, 3.6 - (sim_intensity / 16.0) - (zone.drainage_index * 0.8)), 1)
+                depth = round(min(135.0, max(45.0, (sim_rain_24h / 155.0) * 78.0 + (10.0 - zone.elevation_m) * 4.4)), 1)
+            elif risk_score >= 60.0:
+                tti = round(max(1.8, 5.8 - (sim_intensity / 12.0) - (zone.drainage_index * 0.6)), 1)
+                depth = round(min(75.0, max(22.0, (sim_rain_24h / 155.0) * 48.0 + (10.0 - zone.elevation_m) * 2.6)), 1)
+            elif risk_score >= 35.0:
+                tti = round(max(3.5, 9.0 - (sim_intensity / 8.0)), 1)
+                depth = round(max(8.0, (sim_rain_24h / 155.0) * 25.0), 1)
+            else:
+                tti = 0.0
+                depth = 0.0
+
+            rise_rate = round(depth / max(0.8, tti), 1) if tti > 0.0 else 0.0
+            tti_min = round(max(0.4, tti * 0.75), 1) if tti > 0.0 else 0.0
+            tti_max = round(tti * 1.35, 1) if tti > 0.0 else 0.0
+
+            zone.time_to_impact_hours = tti
+            zone.time_to_impact_range_hours = [tti_min, tti_max]
+            zone.inundation_depth_cm = depth
+            zone.water_rise_rate_cm_hr = rise_rate
+
             # Vulnerability Index
             zone_facilities = [fac for fac in facilities if fac.zone_id == zone.id]
             vuln_score, vuln_drivers = vulnerability_engine.calculate(
@@ -236,6 +259,7 @@ class CounterfactualSimulator:
                     metric="Average Emergency Response Time",
                     baseline_value=f"{baseline_resp_time} min",
                     pravah_value=f"{pravah_resp_time} min",
+                    aegis_value=f"{pravah_resp_time} min",
                     improvement=f"-{time_improvement_pct}%",
                     unit="minutes"
                 ),
@@ -243,6 +267,7 @@ class CounterfactualSimulator:
                     metric="Population Protected / Evacuated",
                     baseline_value=f"{int(total_affected_population * 0.42):,} civilians",
                     pravah_value=f"{int(total_affected_population * 0.78):,} civilians",
+                    aegis_value=f"{int(total_affected_population * 0.78):,} civilians",
                     improvement="+36% Coverage",
                     unit="civilians"
                 ),
@@ -250,6 +275,7 @@ class CounterfactualSimulator:
                     metric="Hospital Route Accessibility",
                     baseline_value=f"{max(1, len(facilities) - threatened_hospitals)} / {len(facilities)} Corridors",
                     pravah_value=f"{len(facilities)} / {len(facilities)} (Via Resilient Bypass)",
+                    aegis_value=f"{len(facilities)} / {len(facilities)} (Via Resilient Bypass)",
                     improvement="+100% Connectivity",
                     unit="hospitals"
                 ),
@@ -257,6 +283,7 @@ class CounterfactualSimulator:
                     metric="Expected Secondary Casualty Risk",
                     baseline_value="High (Isolated pockets)" if impassable_roads > 1 else "Moderate",
                     pravah_value="Low (Pre-staged watercraft)",
+                    aegis_value="Low (Pre-staged watercraft)",
                     improvement="Risk Mitigated",
                     unit="risk level"
                 )
@@ -267,6 +294,7 @@ class CounterfactualSimulator:
                     metric="Emergency Response Readiness",
                     baseline_value="Standard Staging",
                     pravah_value="Real-Time Telemetry Armed",
+                    aegis_value="Real-Time Telemetry Armed",
                     improvement="Operational Standby",
                     unit="status"
                 ),
@@ -274,6 +302,7 @@ class CounterfactualSimulator:
                     metric="Population At Inundation Risk",
                     baseline_value="0 civilians",
                     pravah_value="0 civilians (Safe)",
+                    aegis_value="0 civilians (Safe)",
                     improvement="Zero Exposure",
                     unit="civilians"
                 ),
@@ -281,6 +310,7 @@ class CounterfactualSimulator:
                     metric="Hospital Route Accessibility",
                     baseline_value=f"{len(facilities)} / {len(facilities)} Corridors Open",
                     pravah_value=f"{len(facilities)} / {len(facilities)} Clear",
+                    aegis_value=f"{len(facilities)} / {len(facilities)} Clear",
                     improvement="100% Connectivity",
                     unit="hospitals"
                 ),
@@ -288,6 +318,7 @@ class CounterfactualSimulator:
                     metric="Basin Flood Inflow Hazard",
                     baseline_value="Baseflow (No Overflow)",
                     pravah_value="GloFAS Monitored (Nominal)",
+                    aegis_value="GloFAS Monitored (Nominal)",
                     improvement="Normal",
                     unit="status"
                 )

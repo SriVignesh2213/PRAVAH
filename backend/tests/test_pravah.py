@@ -213,4 +213,62 @@ async def test_open_data_stack():
     assert route_comp["fastest_route"]["flood_risk_pct"] > route_comp["safest_route"]["flood_risk_pct"]
     assert route_comp["effective_time_saved_min"] > 0
 
+@pytest.mark.asyncio
+async def test_copilot_multilingual_advisories():
+    from app.copilot.engine import copilot_engine
+    from app.models.domain import AdvisoryStatus, CounterfactualRequest
+    from app.simulation.counterfactual import counterfactual_simulator
+
+    sim = await counterfactual_simulator.run_simulation(CounterfactualRequest(use_demo_scenario=True))
+    advisories = copilot_engine.generate_multilingual_advisories(zones=sim.zones, is_demo_mode=True)
+    assert len(advisories) == 10
+    
+    velachery = next((a for a in advisories if a.ward_name == "Velachery"), None)
+    assert velachery is not None
+    assert "177" in velachery.ward_label
+    assert velachery.severity in ["CRITICAL", "WARNING"]
+    assert "எச்சரிக்கை" in velachery.tamil_title or "வெள்ள" in velachery.tamil_title
+    assert len(velachery.sms_condensed) <= 160
+    assert velachery.status == AdvisoryStatus.PENDING_OPERATOR_REVIEW
+    assert velachery.target_shelter != ""
+
+@pytest.mark.asyncio
+async def test_copilot_advisory_approval_lifecycle():
+    from app.copilot.engine import copilot_engine
+    from app.models.domain import AdvisoryStatus, AdvisoryApprovalRequest
+
+    # Generate advisories first
+    copilot_engine.generate_multilingual_advisories(use_demo_scenario=True)
+    
+    # Approve ward-01
+    approved = copilot_engine.approve_advisory(
+        AdvisoryApprovalRequest(
+            advisory_id="adv-ward-01",
+            operator_name="Officer Ramanathan - GCC Disaster Cell",
+            operator_notes="Verified against river gauge reading at Jaffarkhanpet"
+        )
+    )
+    assert approved is not None
+    assert approved.status == AdvisoryStatus.OPERATOR_APPROVED
+    assert approved.approved_by == "Officer Ramanathan - GCC Disaster Cell"
+    assert "Jaffarkhanpet" in (approved.operator_notes or "")
+
+@pytest.mark.asyncio
+async def test_copilot_query_resolution():
+    from app.copilot.engine import copilot_engine
+    from app.models.domain import CopilotQueryRequest
+
+    req = CopilotQueryRequest(
+        query="What is the safe evacuation route from Velachery?",
+        use_demo_scenario=True
+    )
+    res = await copilot_engine.answer_copilot_query(req)
+    assert res.query == req.query
+    assert "Velachery" in res.answer or "Guru Nanak" in res.answer or "evacuat" in res.answer.lower()
+    assert res.answer_tamil is not None
+    assert len(res.tools_invoked) >= 1
+    assert len(res.evidence_sources) >= 1
+    assert len(res.suggested_actions) >= 1
+
+
 

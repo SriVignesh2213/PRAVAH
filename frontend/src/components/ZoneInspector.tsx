@@ -40,7 +40,7 @@ export const ZoneInspector: React.FC<ZoneInspectorProps> = ({ zone, onClose, fac
             {zone.name}
           </div>
           <div style={{ fontSize: '10px', color: '#94a3b8' }}>
-            Ward {zone.ward_number} | Elevation: {zone.elevation_m.toFixed(1)}m MSL
+            {zone.ward_label || `Ward ${zone.ward_number}`} | Elevation: {zone.elevation_m.toFixed(1)}m MSL
           </div>
         </div>
         <button onClick={onClose} style={{ color: '#94a3b8', padding: '2px' }}>
@@ -103,6 +103,74 @@ export const ZoneInspector: React.FC<ZoneInspectorProps> = ({ zone, onClose, fac
           </div>
           <div style={{ color: '#94a3b8', fontSize: '9px' }}>Composite Index</div>
         </div>
+      </div>
+
+      {/* HW01 Hyperlocal Flood Early-Warning Metrics */}
+      <div style={{
+        background: '#0a1628',
+        border: '1px solid #0284c7',
+        borderRadius: '3px',
+        padding: '8px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: '10px', fontWeight: 800, color: '#38bdf8', letterSpacing: '0.04em' }}>
+            HYPERLOCAL TIME-TO-IMPACT & INUNDATION
+          </span>
+          <span style={{
+            fontSize: '9px',
+            background: '#0369a1',
+            color: '#e0f2fe',
+            padding: '1px 5px',
+            borderRadius: '2px',
+            fontWeight: 700
+          }}>
+            HW01 COPILOT
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+          <div style={{ background: '#0f172a', padding: '5px', borderRadius: '3px', border: '1px solid #1e293b' }}>
+            <div style={{ fontSize: '9px', color: '#94a3b8' }}>Est. Time-to-Impact (TTI)</div>
+            <div className="font-mono" style={{ fontSize: '14px', fontWeight: 800, color: '#f59e0b', marginTop: '2px' }}>
+              {zone.time_to_impact_hours ? `${zone.time_to_impact_hours.toFixed(1)} hrs` : 'N/A'}
+            </div>
+            {zone.time_to_impact_range_hours && (
+              <div style={{ fontSize: '8px', color: '#64748b' }}>
+                Range: [{zone.time_to_impact_range_hours[0]}h – {zone.time_to_impact_range_hours[1]}h]
+              </div>
+            )}
+          </div>
+
+          <div style={{ background: '#0f172a', padding: '5px', borderRadius: '3px', border: '1px solid #1e293b' }}>
+            <div style={{ fontSize: '9px', color: '#94a3b8' }}>Peak Water Depth</div>
+            <div className="font-mono" style={{ fontSize: '14px', fontWeight: 800, color: (zone.inundation_depth_cm || 0) > 60 ? '#f87171' : '#38bdf8', marginTop: '2px' }}>
+              {zone.inundation_depth_cm ? `${zone.inundation_depth_cm.toFixed(0)} cm` : '0 cm'}
+            </div>
+            <div style={{ fontSize: '8px', color: '#64748b' }}>
+              Rise rate: +{(zone.water_rise_rate_cm_hr || 0).toFixed(1)} cm/hr
+            </div>
+          </div>
+        </div>
+
+        {zone.nearest_shelter_name && (
+          <div style={{ background: '#0f172a', padding: '5px 8px', borderRadius: '3px', border: '1px solid #1e293b', fontSize: '9px' }}>
+            <span style={{ color: '#64748b' }}>Designated Safe Shelter: </span>
+            <span style={{ color: '#34d399', fontWeight: 700 }}>{zone.nearest_shelter_name}</span>
+            {zone.nearest_shelter_capacity && (
+              <span style={{ color: '#94a3b8' }}> ({zone.nearest_shelter_capacity} cap.)</span>
+            )}
+          </div>
+        )}
+
+        {zone.critical_streets && zone.critical_streets.length > 0 && (
+          <div style={{ fontSize: '9px' }}>
+            <span style={{ color: '#f87171', fontWeight: 600 }}>At-Risk Streets to Avoid: </span>
+            <span style={{ color: '#cbd5e1' }}>{zone.critical_streets.join(', ')}</span>
+          </div>
+        )}
       </div>
 
       {/* Feature Contributions (SHAP-aligned explainability) */}

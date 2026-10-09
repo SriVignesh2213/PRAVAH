@@ -50,6 +50,14 @@ export interface ChennaiZone {
   risk_class: RiskClass;
   confidence: number;
   confidence_interval: [number, number];
+  ward_label?: string;
+  time_to_impact_hours?: number;
+  time_to_impact_range_hours?: [number, number];
+  inundation_depth_cm?: number;
+  water_rise_rate_cm_hr?: number;
+  critical_streets?: string[];
+  nearest_shelter_name?: string;
+  nearest_shelter_capacity?: number;
   vulnerability_score: number;
   impact_score: number;
   feature_contributions: Record<string, number>;
@@ -140,6 +148,7 @@ export interface CounterfactualComparison {
   metric: string;
   baseline_value: string;
   pravah_value: string;
+  aegis_value?: string;
   improvement: string;
   unit: string;
 }
@@ -346,4 +355,64 @@ export interface IMDCycloneSuite {
     };
   };
 }
+
+export type AdvisorySeverity = 'CRITICAL' | 'WARNING' | 'WATCH' | 'ADVISORY' | 'NORMAL';
+export type AdvisoryStatus = 'PENDING_OPERATOR_REVIEW' | 'OPERATOR_APPROVED' | 'BROADCAST_AUTHORIZED';
+
+export interface MultilingualAdvisory {
+  id: string;
+  ward_id: string;
+  ward_label: string;
+  ward_name: string;
+  severity: AdvisorySeverity;
+  time_to_impact: string;
+  time_to_impact_hours: number;
+  inundation_expected_depth_cm: number;
+  water_rise_rate_cm_hr: number;
+  status: AdvisoryStatus;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  operator_notes?: string | null;
+  english_title: string;
+  english_message: string;
+  english_action: string;
+  english_safe_route: string;
+  tamil_title: string;
+  tamil_message: string;
+  tamil_action: string;
+  tamil_safe_route: string;
+  sms_condensed: string;
+  target_shelter: string;
+  critical_streets_avoid: string[];
+  is_simulated: boolean;
+  timestamp: string;
+}
+
+export interface CopilotQueryRequest {
+  query: string;
+  ward_id?: string;
+  language?: string;
+  use_demo_scenario?: boolean;
+}
+
+export interface CopilotQueryResponse {
+  query: string;
+  answer: string;
+  answer_tamil?: string | null;
+  intent: string;
+  tools_invoked: string[];
+  evidence_sources: string[];
+  suggested_actions: string[];
+  data_mode: string;
+  timestamp: string;
+}
+
+export interface AdvisoryApprovalRequest {
+  advisory_id: string;
+  operator_name?: string;
+  operator_notes?: string;
+  edited_english_message?: string;
+  edited_tamil_message?: string;
+}
+
 
