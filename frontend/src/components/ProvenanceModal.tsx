@@ -51,7 +51,7 @@ export const ProvenanceModal: React.FC<ProvenanceModalProps> = ({ isOpen, onClos
         </div>
 
         <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-          Every prediction in PRAVAH is mathematically grounded in verified official observational feeds. No synthetic or hallucinated telemetry is presented as live data.
+          Every prediction in AEGIS EARTH is mathematically grounded in verified official observational feeds. No synthetic or hallucinated telemetry is presented as live data.
         </div>
 
         {/* Provenance Table */}

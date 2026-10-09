@@ -130,7 +130,7 @@ export const CopilotModal: React.FC<CopilotModalProps> = ({ isOpen, onClose, isD
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '15px', fontWeight: 800, color: '#f8fafc', letterSpacing: '0.04em' }}>
-                  AEGIS EARTH AGENTIC COPILOT
+                  AEGIS EARTH - ALERTNEST COPILOT
                 </span>
                 <span style={{
                   fontSize: '10px',
@@ -289,7 +289,7 @@ export const CopilotModal: React.FC<CopilotModalProps> = ({ isOpen, onClose, isD
                 <Bot size={32} color="#0ea5e9" />
               </div>
               <h3 style={{ color: '#f1f5f9', fontSize: '16px', fontWeight: 700, marginBottom: '8px' }}>
-                How can AEGIS EARTH Copilot assist you?
+                How can AEGIS EARTH - ALERTNEST Copilot assist you?
               </h3>
               <p style={{ fontSize: '12px', lineHeight: '1.6', color: '#94a3b8' }}>
                 Ask any question regarding localized flood risk, time-to-impact (TTI), safe evacuation corridors, shelter capacity, or multilingual advisories across Chennai wards.

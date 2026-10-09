@@ -91,10 +91,10 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({ isOpen, onClos
           </div>
         </div>
 
-        {/* Operational Decision Impact (Baseline vs PRAVAH) */}
+        {/* Operational Decision Impact (Baseline vs AEGIS EARTH) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <span style={{ fontSize: '11px', fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase' }}>
-            Operational Decision-Support Performance (Baseline vs. PRAVAH)
+            Operational Decision-Support Performance (Baseline vs. AEGIS EARTH)
           </span>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>

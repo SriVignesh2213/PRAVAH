@@ -79,9 +79,10 @@ class Settings(BaseSettings):
     # Operational system state: LIVE, CACHED, DEGRADED, OFFLINE_DEMO
     SYSTEM_MODE: str = "LIVE"
 
-    # Optional LLM
-    LLM_PROVIDER: str = "none"
+    # Optional LLM / Groq Copilot
+    GROQ_API_KEY: Optional[str] = None
+    LLM_PROVIDER: str = "groq"
     LLM_API_KEY: Optional[str] = None
-    LLM_MODEL: Optional[str] = None
+    LLM_MODEL: Optional[str] = "llama-3.3-70b-versatile"
 
 settings = Settings()

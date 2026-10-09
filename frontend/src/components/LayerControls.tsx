@@ -18,7 +18,7 @@ export const LayerControls: React.FC<LayerControlsProps> = ({ layers, onToggleLa
     { key: 'vulnerability', label: 'Vulnerability Index', desc: 'Density & demographic accessibility', color: '#f59e0b' },
     { key: 'roads', label: 'Road Status & Severances', desc: 'Impassable & at-risk arterials', color: '#f43f5e' },
     { key: 'facilities', label: 'Critical Infrastructure', desc: 'Hospitals, Shelters, Substations', color: '#10b981' },
-    { key: 'resilientRoute', label: 'PRAVAH Resilient Bypass', desc: 'Risk-adjusted evacuation corridor', color: '#06b6d4' }
+    { key: 'resilientRoute', label: 'AEGIS Resilient Bypass', desc: 'Risk-adjusted evacuation corridor', color: '#06b6d4' }
   ];
 
   return (

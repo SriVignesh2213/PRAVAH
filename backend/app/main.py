@@ -5,7 +5,7 @@ from app.core.config import settings
 from app.core.logging import logger
 
 app = FastAPI(
-    title="AEGIS EARTH - Hyperlocal Flood Early-Warning and Evacuation Copilot",
+    title="AEGIS EARTH - ALERTNEST - Hyperlocal Flood Early-Warning and Evacuation Copilot",
     description="Hyperlocal Flood Early-Warning & Evacuation Copilot for City Disaster Management Cells & Urban Residents (Chennai Basin)",
     version="2.0.0"
 )
@@ -40,7 +40,7 @@ app.include_router(v1_router, prefix="/api/v1")
 @app.get("/health")
 async def root_health():
     return {
-        "system": "AEGIS EARTH",
+        "system": "AEGIS EARTH - ALERTNEST",
         "title": "Hyperlocal Flood Early-Warning and Evacuation Copilot",
         "status": "OPERATIONAL",
         "environment": settings.ENVIRONMENT,
@@ -50,7 +50,7 @@ async def root_health():
 
 @app.on_event("startup")
 async def on_startup():
-    logger.info("AEGIS EARTH Hyperlocal Early-Warning & Evacuation Copilot backend initialized successfully.")
+    logger.info("AEGIS EARTH - ALERTNEST Hyperlocal Early-Warning & Evacuation Copilot backend initialized successfully.")
 
 if __name__ == "__main__":
     import uvicorn

@@ -66,7 +66,7 @@ export const SystemHealthModal: React.FC<SystemHealthModalProps> = ({ isOpen, on
         </div>
 
         <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-          Real-time status of all external telemetry adapters. PRAVAH utilizes non-blocking graceful fallback with cached state to guarantee operational uptime.
+          Real-time status of all external telemetry adapters. AEGIS EARTH utilizes non-blocking graceful fallback with cached state to guarantee operational uptime.
         </div>
 
         {/* Health Table */}

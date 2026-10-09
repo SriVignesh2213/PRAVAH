@@ -59,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
             }}>
               <Activity size={16} color="#ffffff" />
               <span style={{ fontWeight: 900, fontSize: '15px', letterSpacing: '0.08em', color: '#ffffff' }}>
-                AEGIS EARTH
+                AEGIS EARTH - ALERTNEST
               </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>

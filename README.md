@@ -1,7 +1,7 @@
-# PRAVAH
-### Predictive Resilience & Adaptive Vulnerability-Aware Hazard Response
-**Competition Theme:** Climate, Environment & Disaster Tech  
-**Primary Demonstration:** Chennai / Tamil Nadu Urban Flood Emergency Response
+# AEGIS EARTH - ALERTNEST
+### Hyperlocal Flood Early-Warning & Evacuation Copilot (Problem Statement HW01)
+**Theme:** Climate, Environment & Disaster Tech  
+**Primary Demonstration:** Chennai / Tamil Nadu Urban Flood Emergency Response (Michaung & Live)
 
 ---
 

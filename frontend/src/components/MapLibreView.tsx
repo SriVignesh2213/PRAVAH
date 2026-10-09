@@ -393,7 +393,7 @@ export const MapLibreView: React.FC<MapLibreViewProps> = ({
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{ width: '12px', height: '3px', background: '#06b6d4', borderBottom: '1px dashed #06b6d4' }} />
-          <span>PRAVAH Resilient Evacuation Bypass</span>
+          <span>AEGIS Resilient Evacuation Bypass</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '2px', color: '#94a3b8', fontSize: '10px' }}>
           <span>● Hospital</span>

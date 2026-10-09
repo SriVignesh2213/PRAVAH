@@ -28,7 +28,7 @@ export const RiskAwareRoutingModal: React.FC<RiskAwareRoutingModalProps> = ({
       hazard_warning: '1.1m standing water at Velachery Lake overflow point. High risk of vehicle stranding.'
     },
     safest_route: {
-      name: 'PRAVAH Resilient Corridor (GST - Inner Ring Bypass)',
+      name: 'AEGIS Resilient Corridor (GST - Inner Ring Bypass)',
       distance_km: 9.2,
       nominal_time_min: 18.5,
       flood_risk_pct: 8,
@@ -188,7 +188,7 @@ export const RiskAwareRoutingModal: React.FC<RiskAwareRoutingModalProps> = ({
               </div>
             </div>
 
-            {/* SAFEST ROUTE (PRAVAH Resilient) */}
+            {/* SAFEST ROUTE (AEGIS Resilient) */}
             <div style={{
               background: '#131c2e',
               border: '1px solid #10b981',
@@ -200,7 +200,7 @@ export const RiskAwareRoutingModal: React.FC<RiskAwareRoutingModalProps> = ({
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '11px', fontWeight: 700, color: '#34d399', letterSpacing: '0.04em' }}>
-                  PRAVAH SAFEST RESILIENT ROUTE
+                  AEGIS SAFEST RESILIENT ROUTE
                 </span>
                 <span className="badge-tag badge-low" style={{ fontSize: '10px' }}>
                   RECOMMENDED
@@ -271,7 +271,7 @@ export const RiskAwareRoutingModal: React.FC<RiskAwareRoutingModalProps> = ({
             <p style={{ color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
               Standard GPS navigators minimize nominal travel time ({f.nominal_time_min} min vs {s.nominal_time_min} min) and send ambulances down Velachery Main Road.
               However, with an 88% flood probability and 1.1m standing water, vehicles encounter impassable gridlock, incurring a massive stranding penalty ({f.effective_risk_adjusted_time_min} effective min).
-              PRAVAH's resilient corridor costs an extra 4.5 nominal minutes but guarantees 95% passability on elevated causeways.
+              AEGIS EARTH's resilient corridor costs an extra 4.5 nominal minutes but guarantees 95% passability on elevated causeways.
             </p>
           </div>
         </div>

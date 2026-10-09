@@ -7,15 +7,16 @@ from app.models.domain import (
     ChennaiZone, RoadSegment, Facility
 )
 from app.core.logging import logger
+from app.core.config import settings
 
 class AegisEarthCopilotEngine:
     """
-    AEGIS EARTH - Hyperlocal Flood Early-Warning & Evacuation Copilot Engine.
+    AEGIS EARTH - ALERTNEST: Hyperlocal Flood Early-Warning & Evacuation Copilot Engine.
     Implements:
     1. Automated Ward-Level Multilingual Advisory Generation (English & Tamil)
     2. Time-to-Impact (TTI) & Inundation Depth Quantification
     3. Human-in-the-Loop Operator Review & Broadcast Authorization Workflow
-    4. Agentic Natural Language Querying for Disaster Cell Officers & Residents
+    4. Agentic Natural Language Querying with optional Groq Cloud Llama-3.3-70b Integration
     """
     def __init__(self):
         # In-memory approval audit store & advisory cache
@@ -269,6 +270,67 @@ class AegisEarthCopilotEngine:
         self._advisories_cache[req.advisory_id] = adv
         return adv
 
+    async def _call_groq_llm(
+        self,
+        query: str,
+        grounded_context: str,
+        base_english: str,
+        base_tamil: str
+    ) -> Optional[Dict[str, str]]:
+        api_key = settings.GROQ_API_KEY or settings.LLM_API_KEY
+        if not api_key:
+            return None
+        
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        model = settings.LLM_MODEL or "llama-3.3-70b-versatile"
+        
+        system_prompt = (
+            "You are AEGIS EARTH - ALERTNEST Copilot, the AI operational assistant for Greater Chennai Corporation "
+            "(GCC) Disaster Cell and affected citizens. You answer using ONLY the factual, grounded disaster telemetry provided. "
+            "Return concise, life-saving operational intelligence with clear safety directives, road passability, nearest shelters, "
+            "and time-to-impact. Also include an authentic Tamil regional translation section prefixed with '--- TAMIL ---'."
+        )
+        user_prompt = (
+            f"TELEMETRY CONTEXT:\n{grounded_context}\n\n"
+            f"BASELINE CALCULATIONS:\nEnglish: {base_english}\nTamil: {base_tamil}\n\n"
+            f"USER QUERY: {query}\n\n"
+            f"Please synthesize an authoritative, concise response in English, "
+            f"followed by '--- TAMIL ---' and the Tamil translation."
+        )
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "temperature": 0.2,
+            "max_tokens": 800
+        }
+        
+        try:
+            import httpx
+            async with httpx.AsyncClient(timeout=8.0) as client:
+                resp = await client.post(url, json=payload, headers=headers)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    content = data["choices"][0]["message"]["content"]
+                    if "--- TAMIL ---" in content:
+                        parts = content.split("--- TAMIL ---")
+                        return {
+                            "answer": parts[0].strip(),
+                            "answer_tamil": parts[1].strip()
+                        }
+                    return {"answer": content.strip(), "answer_tamil": base_tamil}
+                else:
+                    logger.warning(f"Groq API call returned status {resp.status_code}: {resp.text}")
+        except Exception as e:
+            logger.warning(f"Groq API call failed, falling back to deterministic response: {e}")
+        return None
+
     async def answer_copilot_query(
         self,
         req: CopilotQueryRequest,
@@ -487,6 +549,23 @@ class AegisEarthCopilotEngine:
 
             actions = ["Inspect Zone Details", "Generate Multilingual Broadcast", "Run Counterfactual Simulation"]
             intent = "GENERAL_SITUATIONAL_AWARENESS"
+
+        # Check if Groq Cloud Inference is enabled via GROQ_API_KEY / LLM_API_KEY
+        if settings.GROQ_API_KEY or settings.LLM_API_KEY:
+            high_risk_names = [f"{z.ward_label} ({z.name.split('(')[0].strip()}: {z.flood_risk_score:.0f}%)" for z in zones if z.flood_risk_score >= 50.0]
+            context_summary = (
+                f"Mode: {data_mode}\n"
+                f"High-Risk Wards: {', '.join(high_risk_names) if high_risk_names else 'None'}\n"
+                f"Severed Roads: {', '.join([r.name for r in roads if r.status == 'IMPASSABLE']) or 'None'}\n"
+                f"Total Shelter Capacity: {sum(f.capacity for f in facilities if f.type == 'SHELTER')} beds"
+            )
+            groq_res = await self._call_groq_llm(req.query, context_summary, en, ta)
+            if groq_res:
+                en = groq_res.get("answer", en)
+                if groq_res.get("answer_tamil"):
+                    ta = groq_res["answer_tamil"]
+                tools_invoked.append("GroqInference(Llama-3.3-70b-versatile)")
+                evidence.append("Groq Cloud High-Speed LPU AI")
 
         return CopilotQueryResponse(
             query=req.query,
